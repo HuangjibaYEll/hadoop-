@@ -1,0 +1,121 @@
+(1)hostname 查看计算机名
+    hostnamectl set-hostname master 
+	设置网卡为开机启动：vi /etc/sysconfig/network-scripts/ifcfg-ens33   将最后一项ONBOOT=no改成 ONBOOT=yes  退出并保存
+	重启：reboot
+	网卡服务：systemctl status/start/stop/restart network.service
+	下载ifconfig工具：yum search ifconfig
+		             yum install 安装包名称
+	用ifconfig命令查看计算机IP           //也可以使用ip addr命令
+	联通Xshell
+
+	设置静态IP：将虚拟机设置中的网络适配器更改为NAT模式（一般默认为NAT）；
+		    打开虚拟网络编辑器，查看VMnet8的设置，根据子网IP更改 DHCP设置 中的起始IP地址，使其在同一网段。
+		    vi /etc/sysconfig/network-scripts/ifcfg-ens33
+		    将BOOTPROTO=dhcp 改成 BOOTPROTO=static
+		    增加：
+		    IPADDR=    #新的静态IP(master:192.168.92.128 , slave1:192.168.92.129 , slave2:192.168.92.130)
+		    GATEWAY=192.168.92.2     #默认网关
+		    NETMASK=255.255.255.0    #子网掩码
+		    DNS1=8.8.8.8    #DNS1 配置
+		    DNS2=8.8.4.4    #DNS2 配置
+
+
+	重启：reboot
+		    
+
+	***总结：
+		1) vi /etc/sysconfig/network-scripts/ifcfg-ens33
+		将最后一项ONBOOT=no改成 ONBOOT=yes 
+		将BOOTPROTO=dhcp 改成 BOOTPROTO=static
+		增加：
+		    IPADDR=xxx.xxx.xxx.xxx    #静态IP(master:192.168.92.128,slave1:129,slave2:130)
+		    GATEWAY=192.168.92.2     #默认网关
+		    NETMASK=255.255.255.0    #子网掩码
+		    DNS1=8.8.8.8    #DNS1 配置
+		    DNS2=8.8.4.4    #DNS2 配置
+		2) systemctl status/start/stop/restart network.service      #这步貌似可以不做
+		3) 互ping以检验
+		
+	
+(2)配置host文件(/etc/hosts)
+	vi /etc/hosts
+	增加：(ip 计算机名)
+	192.168.92.128 master
+	192.168.92.129 slave1
+	192.168.92.130 slave2
+	
+(3)关闭防火墙（将三个虚拟机的防火墙都关闭，时间同步，master是必须关闭）
+	systemctl status firewalld.service  查看防火墙状态
+	systemctl stop firewalld.service  关闭防火墙
+
+	***
+	暂时关闭，重启系统时还会启动：
+	systemctl stop firewalld.service 
+	启动关闭(enable/disable)：
+	systemctl disable firewalld.service
+
+
+(4)时间同步
+	方法：1)date  查看时间
+	             date -s xx:xx  设置时间
+	          2)连网：用命令和网络上时间服务器同步时间
+		ntpdate 网络时间服务器
+		ntpdate time.windows.com //和微软时间服务器同步
+		选择时区：tzselect   
+		
+	          3)hadoop集群对时间要求高，集群内同步。master做时间服务器，slave做客户端，与服务器时间保持一致
+	步骤：
+	          1）下载安装ntp(局域网内ntp时间同步(maser和几个slave都要安装ntp)):
+		   yum install -y ntp
+	          2）配置ntp(master作为服务器，修改ntp配置):
+		只在master虚拟机上配置ntp.conf
+		    vi /etc/ntp.conf 
+		    在最后添加下面内容：
+		        server 127.127.1.0 #local clock
+		        fudge 127.127.1.0 stratum 10 #stratum 0~15
+	          3）	重新启动ntp服务
+		    systemctl restart ntpd.service
+	          4）等5分钟左右，其他两台slave1和slave2同步时间
+		ntpdate master
+		//时间服务器同步时间：ntpdate cn.pool.ntp.org		
+		
+(5)配置ssh免密登陆
+	1）生成公钥、私钥
+		ssh-keygen -t rsa -f 文件名
+		-t 类型 dsa  数字签名
+		生成两个密钥文件，一个是公钥，一个是私钥
+
+		命令:
+		ssh-keygen -t dsa -P '' -f ~/.ssh/id_dsa     #生成公钥、私钥文件
+			(此时用ls .ssh命令可看到id_dsa、  id_dsa.pub两个私钥、公钥文件)
+	2）master节点：
+		cd .ssh
+		cat id_dsa.pub >> authorized_keys         #公钥文件复制成authorized_keys 
+		chmod 600 authorized_keys                  #authorized_keys文件权限：600 rw- --- ---
+			
+	3）ssh连接自己（ssh 内回环）：
+		ssh master
+		第一次需要输入验证:yes
+		退出ssh连接：exit
+	4）slave1、slave2复制(使用scp和cat命令)
+		将master的公钥文件id_dsa.pub内容复制到slave1和slave2的master_dsa.pub文件中
+			slave1：scp master:~/.ssh/id_dsa.pub ./master
+					
+			
+
+		
+
+
+(6)安装JDK
+
+(7)zookeeper安装和配置
+
+(8)hadoop集群的搭建
+
+(9)HBase安装
+    (先在master上操作，之后会有复制到slave1、slave2的步骤)
+    前提：  同步时间——ntpdate master
+	hadoop启动——/usr/zookeeper/zookeeper-3.4.10/bin/zkServer.sh start
+	hadoop启动——/usr/hadoop/hadoop-2.7.3/sbin/start-all.sh
+			jps命令查看hadoop启动情况（在三个虚拟机中）
+	
