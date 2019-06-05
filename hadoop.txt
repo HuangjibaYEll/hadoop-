@@ -1,121 +1,214 @@
-(1)hostname ²é¿´¼ÆËã»úÃû
+(1)hostname æŸ¥çœ‹è®¡ç®—æœºå
     hostnamectl set-hostname master 
-	ÉèÖÃÍø¿¨Îª¿ª»úÆô¶¯£ºvi /etc/sysconfig/network-scripts/ifcfg-ens33   ½«×îºóÒ»ÏîONBOOT=no¸Ä³É ONBOOT=yes  ÍË³ö²¢±£´æ
-	ÖØÆô£ºreboot
-	Íø¿¨·şÎñ£ºsystemctl status/start/stop/restart network.service
-	ÏÂÔØifconfig¹¤¾ß£ºyum search ifconfig
-		             yum install °²×°°üÃû³Æ
-	ÓÃifconfigÃüÁî²é¿´¼ÆËã»úIP           //Ò²¿ÉÒÔÊ¹ÓÃip addrÃüÁî
-	ÁªÍ¨Xshell
+	è®¾ç½®ç½‘å¡ä¸ºå¼€æœºå¯åŠ¨ï¼švi /etc/sysconfig/network-scripts/ifcfg-ens33   å°†æœ€åä¸€é¡¹ONBOOT=noæ”¹æˆ ONBOOT=yes  é€€å‡ºå¹¶ä¿å­˜
+	é‡å¯ï¼šreboot
+	ç½‘å¡æœåŠ¡ï¼šsystemctl status/start/stop/restart network.service
+	ä¸‹è½½ifconfigå·¥å…·ï¼šyum search ifconfig
+		             yum install å®‰è£…åŒ…åç§°
+	ç”¨ifconfigå‘½ä»¤æŸ¥çœ‹è®¡ç®—æœºIP           //ä¹Ÿå¯ä»¥ä½¿ç”¨ip addrå‘½ä»¤
+	è”é€šXshell
 
-	ÉèÖÃ¾²Ì¬IP£º½«ĞéÄâ»úÉèÖÃÖĞµÄÍøÂçÊÊÅäÆ÷¸ü¸ÄÎªNATÄ£Ê½£¨Ò»°ãÄ¬ÈÏÎªNAT£©£»
-		    ´ò¿ªĞéÄâÍøÂç±à¼­Æ÷£¬²é¿´VMnet8µÄÉèÖÃ£¬¸ù¾İ×ÓÍøIP¸ü¸Ä DHCPÉèÖÃ ÖĞµÄÆğÊ¼IPµØÖ·£¬Ê¹ÆäÔÚÍ¬Ò»Íø¶Î¡£
+	è®¾ç½®é™æ€IPï¼šå°†è™šæ‹Ÿæœºè®¾ç½®ä¸­çš„ç½‘ç»œé€‚é…å™¨æ›´æ”¹ä¸ºNATæ¨¡å¼ï¼ˆä¸€èˆ¬é»˜è®¤ä¸ºNATï¼‰ï¼›
+		    æ‰“å¼€è™šæ‹Ÿç½‘ç»œç¼–è¾‘å™¨ï¼ŒæŸ¥çœ‹VMnet8çš„è®¾ç½®ï¼Œæ ¹æ®å­ç½‘IPæ›´æ”¹ DHCPè®¾ç½® ä¸­çš„èµ·å§‹IPåœ°å€ï¼Œä½¿å…¶åœ¨åŒä¸€ç½‘æ®µã€‚
 		    vi /etc/sysconfig/network-scripts/ifcfg-ens33
-		    ½«BOOTPROTO=dhcp ¸Ä³É BOOTPROTO=static
-		    Ôö¼Ó£º
-		    IPADDR=    #ĞÂµÄ¾²Ì¬IP(master:192.168.92.128 , slave1:192.168.92.129 , slave2:192.168.92.130)
-		    GATEWAY=192.168.92.2     #Ä¬ÈÏÍø¹Ø
-		    NETMASK=255.255.255.0    #×ÓÍøÑÚÂë
-		    DNS1=8.8.8.8    #DNS1 ÅäÖÃ
-		    DNS2=8.8.4.4    #DNS2 ÅäÖÃ
+		    å°†BOOTPROTO=dhcp æ”¹æˆ BOOTPROTO=static
+		    å¢åŠ ï¼š
+		    IPADDR=    #æ–°çš„é™æ€IP(master:192.168.92.128 , slave1:192.168.92.129 , slave2:192.168.92.130)
+		    GATEWAY=192.168.92.2     #é»˜è®¤ç½‘å…³
+		    NETMASK=255.255.255.0    #å­ç½‘æ©ç 
+		    DNS1=8.8.8.8    #DNS1 é…ç½®
+		    DNS2=8.8.4.4    #DNS2 é…ç½®
 
 
-	ÖØÆô£ºreboot
+	é‡å¯ï¼šreboot
 		    
 
-	***×Ü½á£º
+	***æ€»ç»“ï¼š
 		1) vi /etc/sysconfig/network-scripts/ifcfg-ens33
-		½«×îºóÒ»ÏîONBOOT=no¸Ä³É ONBOOT=yes 
-		½«BOOTPROTO=dhcp ¸Ä³É BOOTPROTO=static
-		Ôö¼Ó£º
-		    IPADDR=xxx.xxx.xxx.xxx    #¾²Ì¬IP(master:192.168.92.128,slave1:129,slave2:130)
-		    GATEWAY=192.168.92.2     #Ä¬ÈÏÍø¹Ø
-		    NETMASK=255.255.255.0    #×ÓÍøÑÚÂë
-		    DNS1=8.8.8.8    #DNS1 ÅäÖÃ
-		    DNS2=8.8.4.4    #DNS2 ÅäÖÃ
-		2) systemctl status/start/stop/restart network.service      #Õâ²½Ã²ËÆ¿ÉÒÔ²»×ö
-		3) »¥pingÒÔ¼ìÑé
+		å°†æœ€åä¸€é¡¹ONBOOT=noæ”¹æˆ ONBOOT=yes 
+		å°†BOOTPROTO=dhcp æ”¹æˆ BOOTPROTO=static
+		å¢åŠ ï¼š
+		    IPADDR=xxx.xxx.xxx.xxx    #é™æ€IP(master:192.168.92.128,slave1:129,slave2:130)
+		    GATEWAY=192.168.92.2     #é»˜è®¤ç½‘å…³
+		    NETMASK=255.255.255.0    #å­ç½‘æ©ç 
+		    DNS1=8.8.8.8    #DNS1 é…ç½®
+		    DNS2=8.8.4.4    #DNS2 é…ç½®
+		2) systemctl status/start/stop/restart network.service      #è¿™æ­¥è²Œä¼¼å¯ä»¥ä¸åš
+		3) äº’pingä»¥æ£€éªŒ
 		
 	
-(2)ÅäÖÃhostÎÄ¼ş(/etc/hosts)
+(2)é…ç½®hostæ–‡ä»¶(/etc/hosts)
 	vi /etc/hosts
-	Ôö¼Ó£º(ip ¼ÆËã»úÃû)
+	å¢åŠ ï¼š(ip è®¡ç®—æœºå)
 	192.168.92.128 master
 	192.168.92.129 slave1
 	192.168.92.130 slave2
 	
-(3)¹Ø±Õ·À»ğÇ½£¨½«Èı¸öĞéÄâ»úµÄ·À»ğÇ½¶¼¹Ø±Õ£¬Ê±¼äÍ¬²½£¬masterÊÇ±ØĞë¹Ø±Õ£©
-	systemctl status firewalld.service  ²é¿´·À»ğÇ½×´Ì¬
-	systemctl stop firewalld.service  ¹Ø±Õ·À»ğÇ½
+(3)å…³é—­é˜²ç«å¢™ï¼ˆå°†ä¸‰ä¸ªè™šæ‹Ÿæœºçš„é˜²ç«å¢™éƒ½å…³é—­ï¼Œæ—¶é—´åŒæ­¥ï¼Œmasteræ˜¯å¿…é¡»å…³é—­ï¼‰
+	systemctl status firewalld.service  æŸ¥çœ‹é˜²ç«å¢™çŠ¶æ€
+	systemctl stop firewalld.service  å…³é—­é˜²ç«å¢™
 
 	***
-	ÔİÊ±¹Ø±Õ£¬ÖØÆôÏµÍ³Ê±»¹»áÆô¶¯£º
+	æš‚æ—¶å…³é—­ï¼Œé‡å¯ç³»ç»Ÿæ—¶è¿˜ä¼šå¯åŠ¨ï¼š
 	systemctl stop firewalld.service 
-	Æô¶¯¹Ø±Õ(enable/disable)£º
+	å¯åŠ¨å…³é—­(enable/disable)ï¼š
 	systemctl disable firewalld.service
 
 
-(4)Ê±¼äÍ¬²½
-	·½·¨£º1)date  ²é¿´Ê±¼ä
-	             date -s xx:xx  ÉèÖÃÊ±¼ä
-	          2)Á¬Íø£ºÓÃÃüÁîºÍÍøÂçÉÏÊ±¼ä·şÎñÆ÷Í¬²½Ê±¼ä
-		ntpdate ÍøÂçÊ±¼ä·şÎñÆ÷
-		ntpdate time.windows.com //ºÍÎ¢ÈíÊ±¼ä·şÎñÆ÷Í¬²½
-		Ñ¡ÔñÊ±Çø£ºtzselect   
+(4)æ—¶é—´åŒæ­¥
+	æ–¹æ³•ï¼š1)date  æŸ¥çœ‹æ—¶é—´
+	             date -s xx:xx  è®¾ç½®æ—¶é—´
+	          2)è¿ç½‘ï¼šç”¨å‘½ä»¤å’Œç½‘ç»œä¸Šæ—¶é—´æœåŠ¡å™¨åŒæ­¥æ—¶é—´
+		ntpdate ç½‘ç»œæ—¶é—´æœåŠ¡å™¨
+		ntpdate time.windows.com //å’Œå¾®è½¯æ—¶é—´æœåŠ¡å™¨åŒæ­¥
+		é€‰æ‹©æ—¶åŒºï¼štzselect   
 		
-	          3)hadoop¼¯Èº¶ÔÊ±¼äÒªÇó¸ß£¬¼¯ÈºÄÚÍ¬²½¡£master×öÊ±¼ä·şÎñÆ÷£¬slave×ö¿Í»§¶Ë£¬Óë·şÎñÆ÷Ê±¼ä±£³ÖÒ»ÖÂ
-	²½Öè£º
-	          1£©ÏÂÔØ°²×°ntp(¾ÖÓòÍøÄÚntpÊ±¼äÍ¬²½(maserºÍ¼¸¸öslave¶¼Òª°²×°ntp)):
+	          3)hadoopé›†ç¾¤å¯¹æ—¶é—´è¦æ±‚é«˜ï¼Œé›†ç¾¤å†…åŒæ­¥ã€‚masteråšæ—¶é—´æœåŠ¡å™¨ï¼Œslaveåšå®¢æˆ·ç«¯ï¼Œä¸æœåŠ¡å™¨æ—¶é—´ä¿æŒä¸€è‡´
+	æ­¥éª¤ï¼š
+	          1ï¼‰ä¸‹è½½å®‰è£…ntp(å±€åŸŸç½‘å†…ntpæ—¶é—´åŒæ­¥(maserå’Œå‡ ä¸ªslaveéƒ½è¦å®‰è£…ntp)):
 		   yum install -y ntp
-	          2£©ÅäÖÃntp(master×÷Îª·şÎñÆ÷£¬ĞŞ¸ÄntpÅäÖÃ):
-		Ö»ÔÚmasterĞéÄâ»úÉÏÅäÖÃntp.conf
+	          2ï¼‰é…ç½®ntp(masterä½œä¸ºæœåŠ¡å™¨ï¼Œä¿®æ”¹ntpé…ç½®):
+		åªåœ¨masterè™šæ‹Ÿæœºä¸Šé…ç½®ntp.conf
 		    vi /etc/ntp.conf 
-		    ÔÚ×îºóÌí¼ÓÏÂÃæÄÚÈİ£º
+		    åœ¨æœ€åæ·»åŠ ä¸‹é¢å†…å®¹ï¼š
 		        server 127.127.1.0 #local clock
 		        fudge 127.127.1.0 stratum 10 #stratum 0~15
-	          3£©	ÖØĞÂÆô¶¯ntp·şÎñ
+	          3ï¼‰	é‡æ–°å¯åŠ¨ntpæœåŠ¡
 		    systemctl restart ntpd.service
-	          4£©µÈ5·ÖÖÓ×óÓÒ£¬ÆäËûÁ½Ì¨slave1ºÍslave2Í¬²½Ê±¼ä
+	          4ï¼‰ç­‰5åˆ†é’Ÿå·¦å³ï¼Œå…¶ä»–ä¸¤å°slave1å’Œslave2åŒæ­¥æ—¶é—´
 		ntpdate master
-		//Ê±¼ä·şÎñÆ÷Í¬²½Ê±¼ä£ºntpdate cn.pool.ntp.org		
+		//æ—¶é—´æœåŠ¡å™¨åŒæ­¥æ—¶é—´ï¼šntpdate cn.pool.ntp.org		
 		
-(5)ÅäÖÃsshÃâÃÜµÇÂ½
-	1£©Éú³É¹«Ô¿¡¢Ë½Ô¿
-		ssh-keygen -t rsa -f ÎÄ¼şÃû
-		-t ÀàĞÍ dsa  Êı×ÖÇ©Ãû
-		Éú³ÉÁ½¸öÃÜÔ¿ÎÄ¼ş£¬Ò»¸öÊÇ¹«Ô¿£¬Ò»¸öÊÇË½Ô¿
+(5)é…ç½®sshå…å¯†ç™»é™†
 
-		ÃüÁî:
-		ssh-keygen -t dsa -P '' -f ~/.ssh/id_dsa     #Éú³É¹«Ô¿¡¢Ë½Ô¿ÎÄ¼ş
-			(´ËÊ±ÓÃls .sshÃüÁî¿É¿´µ½id_dsa¡¢  id_dsa.pubÁ½¸öË½Ô¿¡¢¹«Ô¿ÎÄ¼ş)
-	2£©master½Úµã£º
+	æ³¨ï¼šsshå…å¯†ç™»é™†åŸç†
+	åœ¨Aç«¯ä»¥ ssh-keygen å‘½ä»¤ ç”Ÿæˆä¸€å¯¹å…¬é’¥ç§é’¥ï¼Œç§é’¥å­˜æ”¾åœ¨Aç«¯ï¼Œå…¬é’¥ä¸Šä¼ åˆ°Bã€Cç«¯ã€‚è¿™æ ·ï¼Œæ¯æ¬¡ä»Aç«¯ç™»é™†åˆ°Bã€Cç«¯æ—¶ï¼ŒAç«¯å¯å‡­å€Ÿç€ç§é’¥è®©Bã€Cç«¯è®¤è¯è‡ªå·±ã€‚	
+
+	1ï¼‰ç”Ÿæˆå…¬é’¥ã€ç§é’¥
+		ssh-keygen -t rsa -f æ–‡ä»¶å
+		-t ç±»å‹ dsa  æ•°å­—ç­¾å
+		ç”Ÿæˆä¸¤ä¸ªå¯†é’¥æ–‡ä»¶ï¼Œä¸€ä¸ªæ˜¯å…¬é’¥ï¼Œä¸€ä¸ªæ˜¯ç§é’¥
+
+		å‘½ä»¤:
+		ssh-keygen -t dsa -f ~/.ssh/id_dsa è¿˜éœ€è¾“å…¥å¯†ç ï¼š123456
+		ssh-keygen -t dsa -P '' -f ~/.ssh/id_dsa     #ç”Ÿæˆå…¬é’¥ã€ç§é’¥æ–‡ä»¶
+			(æ­¤æ—¶ç”¨ls .sshå‘½ä»¤å¯çœ‹åˆ°id_dsaã€  id_dsa.pubä¸¤ä¸ªç§é’¥ã€å…¬é’¥æ–‡ä»¶)
+	2ï¼‰masterèŠ‚ç‚¹ï¼š
 		cd .ssh
-		cat id_dsa.pub >> authorized_keys         #¹«Ô¿ÎÄ¼ş¸´ÖÆ³Éauthorized_keys 
-		chmod 600 authorized_keys                  #authorized_keysÎÄ¼şÈ¨ÏŞ£º600 rw- --- ---
+		
+		cat id_dsa.pub >> authorized_keys         #å…¬é’¥æ–‡ä»¶å¤åˆ¶æˆauthorized_keys 
+		
+		chmod 600 authorized_keys                  #authorized_keysæ–‡ä»¶æƒé™ï¼š600 rw- --- ---
 			
-	3£©sshÁ¬½Ó×Ô¼º£¨ssh ÄÚ»Ø»·£©£º
-		ssh master
-		µÚÒ»´ÎĞèÒªÊäÈëÑéÖ¤:yes
-		ÍË³össhÁ¬½Ó£ºexit
-	4£©slave1¡¢slave2¸´ÖÆ(Ê¹ÓÃscpºÍcatÃüÁî)
-		½«masterµÄ¹«Ô¿ÎÄ¼şid_dsa.pubÄÚÈİ¸´ÖÆµ½slave1ºÍslave2µÄmaster_dsa.pubÎÄ¼şÖĞ
-			slave1£ºscp master:~/.ssh/id_dsa.pub ./master
-					
-			
+		sshè¿æ¥è‡ªå·±ï¼ˆssh å†…å›ç¯ï¼‰ï¼š
+		       ssh masterï¼ˆè™šæ‹Ÿæœºåï¼‰
+		       ç¬¬ä¸€æ¬¡éœ€è¦è¾“å…¥éªŒè¯:yes  
+		       é€€å‡ºsshè¿æ¥ï¼šexit
+	3ï¼‰åœ¨slave1ã€slave2ä¸­é‡å¤ä¸Šè¿°1ï¼‰ã€2ï¼‰ã€3ï¼‰çš„æ­¥éª¤ã€‚
 
+	4ï¼‰åœ¨slave1å’Œslave2ï¼šå¤åˆ¶masterçš„å…¬é’¥æ–‡ä»¶ï¼Œï¼ˆscpå‘½ä»¤è¿œç¨‹å¤åˆ¶ï¼‰				
+		****å…·ä½“å‘½ä»¤ï¼š
+		å…ˆå°†masterçš„å…¬é’¥æ–‡ä»¶å†…å®¹id_dsa.pubè¿œç¨‹å¤åˆ¶åˆ°slave1ã€slave2çš„master_dsa.pubä¸­ï¼Œå†å°†master_dsa.pubè¿½åŠ åˆ°authorized_keysä¸­
+		          åœ¨slave1:  scp master:~/.ssh/id_dsa.pub ~/.ssh/master_dsa.pub    
+			          cat master_dsa.pub >> authorized_keys
+		          åœ¨slave2:  scp master:~/.ssh/id_dsa.pub ~/.ssh/master_dsa.pub      yes   è¾“å¯†ç 
+		          	          cat master_dsa.pub >> authorized_keys
+			
+	     *************å®ç°ä¸‰å°è™šæ‹Ÿæœºsshå…å¯†ç™»é™†å…¨éƒ¨è¿‡ç¨‹(ä¸¤ç§æ–¹æ³•)*************
+		a. 
+			åœ¨master:
+				scp slave1:~/.ssh/id_dsa.pub ~/.ssh/slave1_dsa.pub    
+				cat slave1_dsa.pub >> authorized_keys
+				scp slave2:~/.ssh/id_dsa.pub ~/.ssh/slave2_dsa.pub    
+				cat slave2_dsa.pub >> authorized_keys
+			 åœ¨slave1:
+				scp master:~/.ssh/id_dsa.pub ~/.ssh/master_dsa.pub    
+				cat master_dsa.pub >> authorized_keys
+				scp slave2:~/.ssh/id_dsa.pub ~/.ssh/slave2_dsa.pub    
+				cat slave2_dsa.pub >> authorized_keys
+			 åœ¨slave2:
+				scp master:~/.ssh/id_dsa.pub ~/.ssh/master_dsa.pub    
+				cat master_dsa.pub >> authorized_keys
+				scp slave1:~/.ssh/id_dsa.pub ~/.ssh/slave1_dsa.pub    
+				cat slave1_dsa.pub >> authorized_keys
+			(authorized_keysä¸­å°†å­˜æ”¾ä¸‰å°è™šæ‹Ÿæœºçš„å…¬é’¥æ–‡ä»¶å†…å®¹)
+		b.   
+			nä¸ªæœºå™¨ï¼ŒæŠŠnä¸ªè™šæ‹Ÿæœºçš„å…¬é’¥æ–‡ä»¶å¤åˆ¶åˆ°ä¸€ä¸ªè™šæ‹Ÿæœºä¸­
+			cat  ï¼ˆè™šæ‹Ÿæœº1ï¼‰å…¬å…±é’¥æ–‡ä»¶  >> authorized_keys
+			ã€‚ã€‚ã€‚
+			cat  ï¼ˆè™šæ‹Ÿæœºnï¼‰å…¬å…±é’¥æ–‡ä»¶  >> authorized_keys
+			æœ€åå°†ç”Ÿæˆçš„authorized_keysæ–‡ä»¶å¤åˆ¶åˆ°å„ä¸ªè™šæ‹Ÿæœºä¸­
+
+
+		å†å†å†ä¿®æ”¹ï¼š
+		åœ¨masterä¸­ï¼š
+		ssh-keygen -t dsa -P '' -f ~/.ssh/id_dsa
+		cd .ssh
+		cat id_dsa.pub >> authorized_keys
+		chmod 600 authorized_keys
+		ssh master
+		scp slave1:~/.ssh/id_dsa.pub ~/.ssh/slave1_dsa.pub    
+		cat slave1_dsa.pub >> authorized_keys
+		scp slave2:~/.ssh/id_dsa.pub ~/.ssh/slave2_dsa.pub    
+		cat slave2_dsa.pub >> authorized_keys	
+
+	
+
+		å†å†å†å†ä¿®æ”¹ï¼š
+		(å…ˆå®ç°masterå¯¹slave1å’Œslave2çš„sshå…å¯†ç™»é™†)
+		åœ¨masterã€slave1ã€slave2ä¸­ï¼š
+		ssh-keygen -t dsa -P ''        æ ¹æ®æç¤ºè¾“å…¥/root/.ssh/id_dsa
+		(æˆ–è€…è¾“å…¥ï¼šssh-keygen -t dsa -P '' -f ~/.ssh/id_dsa)
+		åœ¨masterä¸­ï¼š
+		scp .ssh/id_dsa.pub root@slave1:/root/.ssh/id_dsa.pub
+		scp .ssh/id_dsa.pub root@slave2:/root/.ssh/id_dsa.pub
+		åœ¨slave1ã€slave2ä¸­ï¼š
+		cat .ssh/id_dsa.pub >> .ssh/authorized_keys
+		chmod 600 .ssh/authorized_keys
+		åœ¨masterä¸­ï¼š
+		ssh slave1
+		ssh slave2
+		(å†å®ç°slave1å¯¹masterå’Œslave2çš„sshå…å¯†ç™»é™†)       ************ä¸çŸ¥é“ä¸ºå•¥å®ç°ä¸äº†
+		åœ¨slave1ä¸­ï¼š
+		scp .ssh/id_dsa.pub root@master:/root/.ssh/id_dsa.pub
+		scp .ssh/id_dsa.pub root@slave2:/root/.ssh/id_dsa.pub
+		åœ¨masterã€slave2ä¸­ï¼š
+		cat .ssh/id_dsa.pub >> .ssh/authorized_keys
+		chmod 600 .ssh/authorized_keys
+		åœ¨slave1ä¸­ï¼š
+		ssh master
+		ssh slave2
+
+
+
+		å†å†å†å†å†å†ä¿®æ”¹ï¼ˆæœ€ç»ˆç‰ˆï¼‰ï¼š
+		1ï¼‰åœ¨ä¸‰å°è™šæ‹Ÿæœºä¸Šï¼šssh-keygen -t dsa -P '' -f ~/.ssh/id_dsa
+		2ï¼‰å°†æ‰€æœ‰æœåŠ¡å™¨ä¸Šçš„å…¬é’¥åˆå¹¶åˆ°ä¸€ä¸ªè™šæ‹Ÿæœºçš„authorized_keysæ–‡ä»¶ä¸­(ä»¥masterä¸ºä¸»)ï¼š
+			åœ¨masterä¸Šï¼šcat .ssh/id_dsa.pub >> .ssh/authorized_keys
+		   		  ssh root@slave1 cat /root/.ssh/id_dsa.pub >> .ssh/authorized_keys
+		  		   ssh root@slave2 cat /root/.ssh/id_dsa.pub >> .ssh/authorized_keys 
+		3ï¼‰å°†authorized_keysã€known_hostsåˆ†åˆ«å¤åˆ¶åˆ°å…¶ä»–æœåŠ¡å™¨çš„.sshç›®å½•ä¸‹
+			scp .ssh/authorized_keys root@slave1:/root/.ssh/
+			scp .ssh/known_hosts root@slave1:/root/.ssh/
+			scp .ssh/authorized_keys root@slave2:/root/.ssh/
+			scp .ssh/known_hosts root@slave2:/root/.ssh/
+		ä»¥ä¸‹æ­¥éª¤å¯åšå¯ä¸åšï¼š
+		4ï¼‰ä¿®æ”¹ä¸‰å°è™šæ‹Ÿæœºçš„.ssh/authorized_keysæ–‡ä»¶æƒé™ï¼šchmod 600 .ssh/authorized_keys
+		5ï¼‰ä¸‰å°è™šæ‹Ÿæœºäº’ç›¸sshæ¥è¿æ¥
+			
 		
 
 
-(6)°²×°JDK
+(6)å®‰è£…JDK
 
-(7)zookeeper°²×°ºÍÅäÖÃ
+(7)zookeeperå®‰è£…å’Œé…ç½®
 
-(8)hadoop¼¯ÈºµÄ´î½¨
+(8)hadoopé›†ç¾¤çš„æ­å»º
 
-(9)HBase°²×°
-    (ÏÈÔÚmasterÉÏ²Ù×÷£¬Ö®ºó»áÓĞ¸´ÖÆµ½slave1¡¢slave2µÄ²½Öè)
-    Ç°Ìá£º  Í¬²½Ê±¼ä¡ª¡ªntpdate master
-	hadoopÆô¶¯¡ª¡ª/usr/zookeeper/zookeeper-3.4.10/bin/zkServer.sh start
-	hadoopÆô¶¯¡ª¡ª/usr/hadoop/hadoop-2.7.3/sbin/start-all.sh
-			jpsÃüÁî²é¿´hadoopÆô¶¯Çé¿ö£¨ÔÚÈı¸öĞéÄâ»úÖĞ£©
+(9)HBaseå®‰è£…
+    (å…ˆåœ¨masterä¸Šæ“ä½œï¼Œä¹‹åä¼šæœ‰å¤åˆ¶åˆ°slave1ã€slave2çš„æ­¥éª¤)
+    å‰æï¼š  åŒæ­¥æ—¶é—´â€”â€”ntpdate master
+	hadoopå¯åŠ¨â€”â€”/usr/zookeeper/zookeeper-3.4.10/bin/zkServer.sh start
+	hadoopå¯åŠ¨â€”â€”/usr/hadoop/hadoop-2.7.3/sbin/start-all.sh
+			jpså‘½ä»¤æŸ¥çœ‹hadoopå¯åŠ¨æƒ…å†µï¼ˆåœ¨ä¸‰ä¸ªè™šæ‹Ÿæœºä¸­ï¼‰
 	
