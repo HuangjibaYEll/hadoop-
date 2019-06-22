@@ -198,15 +198,282 @@
 			
 		
 (6)安装JDK
+1）创建目录：
+		mkdir /opt/soft
+		mkdir /user/java
+	2）使用xftp工具，把 jdk-8u171-linux-x64.tar.gz 文件拷贝到虚拟机的 /opt/soft 目录下
+	3）解压就是安装的第一步，第二步配置环境变量
+		tar -xzvf /opt/soft/jdk-8u171-linux-x64.tar.gz -C /usr/java
+		vi /etc/profile
+		(在下面添加以下几条内容)
+		#JDK
+		export JAVA_HOME=/usr/java/jdk1.8.0_171
+		export CLASSPATH=$JAVA_HOME/lib/
+		export PATH=$PATH:$JAVA_HOME/bin
+
+	4）使环境变量生效：source /etc/profile
 
 (7)zookeeper安装和配置
+	1）把电脑中的zookeeper软件上传到虚拟机master中	
+		(使用xftp工具，把 zookeeper-3.4.10.tar.gz 文件拷贝到虚拟机的 /opt/soft 目录下)
+		( 或者使用wget
+			wget http://archive.apache.org/dist/zookeeper/zookeeper-3.4.10/zookeeper-3.4.10.tar.gz
+ 			mv zookeeper-3.4.10.tar.gz /opt
+ 			cd /opt
+ 			tar -zxvf zookeeper-3.4.10.tar.gz )
+	2）修改master主机名和ip地址的映射
+		vi /etc/hosts
+		192.168.121.128 master master.root
+		192.168.121.129 slave1 slave1.root
+		192.168.121.130 slave2 slave2.root
+		
+	3）先在master这个虚拟机上安装zookeeper，安装目录：/usr/zookeeper
+		mkdir /usr/zookeeper
+		tar -xzvf /opt/soft/zookeeper-3.4.10.tar.gz -C /usr/zookeeper
+
+	4）配置处理：
+	          zoo.cfg文件设置
+		cd /usr/zookeeper/zookeeper-3.4.10/conf
+		cp zoo_sample.cfg zoo.cfg     #改名？
+		vi zoo.cfg
+		(以下为修改并增加的内容)
+		dataDir=/usr/zookeeper/zookeeper-3.4.10/zkdata     #数据存储目录
+		dataLogDir=/usr/zookeeper/zookeeper-3.4.10/zkdatalog
+		server.1=master:2888:3888
+		server.2=slave1:2888:3888
+		server.3=slave2:2888:3888    
+		
+		mkdir /usr/zookeeper/zookeeper-3.4.10/zkdata
+		mkdir /usr/zookeeper/zookeeper-3.4.10/zkdatalog
+		在/usr/zookeeper/zookeeper-3.4.10/zkdata中建立一个文件myid,文件保存一个数字：必须与zoo.cfg中的server.x=这台机器名:2888:3888一样
+			master：1
+			slave1：2
+			slave2：3
+			//server.x=xxxx:dddd:dddd
+		vi /usr/zookeeper/zookeeper-3.4.10/zkdata/myid
+
+
+
+	5） slave1和slave2也要修改主机名和ip地址的映射
+		在master上直接复制：scp /etc/hosts root@slave1:/etc/hosts
+				  scp /etc/hosts root@slave2:/etc/hosts
+	      slave1和slave2也要安装配置zookeeper
+	          复制master中的zookeeper目录到slave1和slave2中：
+		scp -r /usr/zookeeper root@slave1:/usr/
+		scp -r /usr/zookeeper root@slave2:/usr/
+	          更改两个虚拟机 /usr/zookeeper/zookeeper-3.4.10/zkdata/myid 中的数字,vi /usr/zookeeper/zookeeper-3.4.10/zkdata/myid
+
+	6）配置环境变量（三台虚拟机都需要做）
+		vi /etc/profile
+
+		#ZOOKEEPER
+		export ZOOKEEPER_HOME=/usr/zookeeper/zookeeper-3.4.10
+		PATH=$PATH:$ZOOKEEPER_HOME/bin
+
+
+		使环境变量生效：source /etc/profile
+		检验：echo $PATH
+	
+	7）启动zookeeper集群（三台虚拟机都需要做）
+		执行zookeeper的脚本命令
+		zookeeper安装目录中的bin：zkServer.sh start/status  启动/查看状态
+			Mode: follower/leader
 
 (8)hadoop集群的搭建
+	1）把hadoop软件复制到虚拟机master中（先在master中操作，后面直接复制）
+		(使用xftp工具，把 hadoop-2.7.6.tar.gz 文件拷贝到虚拟机的 /opt/soft 目录下)
+		(或者使用wget
+			wget http://apache.claz.org/hadoop/common/hadoop-2.7.6/hadoop-2.7.6.tar.gz
+			tar zxf hadoop-2.7.6.tar.gz
+			mv hadoop-2.7.6/* to hadoop)
+
+	2）先在master这个虚拟机上安装hadoop，安装目录：/usr/hadoop
+		mkdir /usr/hadoop
+		解压文件，把/opt/soft/hadoop-2.7.6.tar.gz解压到/usr/hadoop/:
+		tar -xzvf /opt/soft/hadoop-2.7.6.tar.gz -C /usr/hadoop
+
+	3）设置环境变量
+		vi /etc/profile
+		(添加以下内容)
+		#HADOOP
+		export HADOOP_HOME=/usr/hadoop/hadoop-2.7.6
+		export CLASSPATH=$CLASSPATH:$HADOOP_HOME/lib
+		export PATH=$PATH:$HADOOP_HOME/bin
+	4）source /etc/profile    #使得环境变量生效
+
+	5）hadoop-env.sh
+		vi /usr/hadoop/hadoop-2.7.6/etc/hadoop/hadoop-env.sh
+		把“export JAVA_HOME=${JAVA_HOME}”这行注释掉
+		并在下面添加：export JAVA_HOME=/usr/java/jdk1.8.0_171
+
+	6）修改core-site-xml
+		vi  /usr/hadoop/hadoop-2.7.6/etc/hadoop/core-site.xml 
+		在<configuration>和</configuration>之间添加
+		<property>
+ 		<name>fs.default.name</name>
+ 		<value>hdfs://master:9000</value>
+		</property>
+
+		<property>
+ 		<name>hadoop.tmp.dir</name>
+ 		<value>/usr/hadoop/hadoop-2.7.6/hdfs/tmp</value>
+ 		<description>A base for other temporary directories.</description>
+		</property>
+
+		<property>
+ 		<name>io.file.buffer.size</name>
+ 		<value>131072</value>
+		</property>
+
+
+		<property>
+ 		<name>fs.checkpoint.period</name>
+ 		<value>60</value>
+		</property>
+
+		<property>
+ 		<name>fs.checkpoint.size</name>
+ 		<value>67108864</value>
+		</property>
+
+	7）修改yarn-site-xml
+		vi  /usr/hadoop/hadoop-2.7.6/etc/hadoop/yarn-site.xml 
+		在<configuration>和</configuration>之间添加
+		<property>
+ 		<name>yarn.resourcemanager.address</name>
+ 		<value>master:18040</value>
+		</property>
+
+
+		<property>
+ 		<name>yarn.resourcemanager.scheduler.address</name>
+ 		<value>master:18030</value>
+		</property>
+
+		<property>
+ 		<name>yarn.resourcemanager.webapp.address</name>
+ 		<value>master:18088</value>
+		</property>
+
+		<property>
+ 		<name>yarn.resourcemanager.resource-tracker.address</name>
+ 		<value>master:18025</value>
+		</property>
+
+		<property>
+		 <name>yarn.resourcemanager.admin.address</name>
+		 <value>master:18141</value>
+		</property>
+
+		<property>
+ 		<name>yarn.nodemanager.aux-services</name>
+ 		<value>mapreduce_shuffle</value>
+		</property>
+
+		<property>
+		 <name>yarn.nodemanager.auxservices.mapreduce.shuffle.class</name>
+ 		<value>org.apache.hadoop.mapred.ShuffleHandler</value>
+		</property>
+
+	8）修改hdfs-site-xml
+		vi  /usr/hadoop/hadoop-2.7.6/etc/hadoop/hdfs-site.xml 
+		在<configuration>和</configuration>之间添加
+		<property>
+		 <name>dfs.replication</name>
+ 		<value>2</value>
+		</property>
+
+		<property>
+ 		<name>dfs.namenode.name.dir</name>
+ 		<value>file:/usr/hadoop/hadoop-2.7.6/hdfs/name</value>
+ 		<final>true</final>
+		</property>
+
+
+
+		<property>
+		 <name>dfs.datanode.data.dir</name>
+ 		<value>file:/usr/hadoop/hadoop-2.7.6/hdfs/data</value>
+ 		<final>true</final>
+		</property>
+
+
+
+		<property>
+ 		<name>dfs.namenode.secondary.http-address</name>
+ 		<value>master:9001</value>
+		</property>
+
+
+		<property>
+ 		<name>dfs.webhdfs.enabled</name>
+		 <value>true</value>
+		</property>
+
+
+		<property>
+ 		<name>dfs.permissions</name>
+		 <value>false</value>
+		</property>
+	9）修改mapred-site-xml
+		复制一个样本：cp /usr/hadoop/hadoop-2.7.6/etc/hadoop/mapred-site.xml.template /usr/hadoop/hadoop-2.7.6/etc/hadoop/mapred-site.xml
+		vi  /usr/hadoop/hadoop-2.7.6/etc/hadoop/mapred-site.xml.template /usr/hadoop/hadoop-2.7.6/etc/hadoop/mapred-site.xml
+		在<configuration>和</configuration>之间添加
+ 		<property>
+ 		 <name>mapreduce.framework.name</name>
+ 		 <value>yarn</value>
+ 		</property>
+
+	10）修改/usr/hadoop/hadoop-2.7.6/etc/hadoop/slaves
+		vi /usr/hadoop/hadoop-2.7.6/etc/hadoop/slaves
+		文件内容：
+		删除原来的localhost
+		添加下面内容
+		slave1
+		slave2
+
+	11）新建/usr/hadoop/hadoop-2.7.6/etc/hadoop/master
+		vi /usr/hadoop/hadoop-2.7.6/etc/hadoop/master
+		文件内容：
+		master
+
+	12）slave1和slave2的安装，直接复制
+		scp -r /usr/hadoop root@slave1:/usr/
+		scp -r /usr/hadoop root@slave2:/usr/
+
+	13）格式化Hadoop(只在master上操作)
+		hadoop namenode -format 
+		系统自动在hdfs/name/下创建current目录
+		至此，Hadoop主节点配置完成。
+		NameNode地址默认为50070    ，http://192.168.92.128:50070/
+		ResourceManager地址默认为8088
+
+	14）启动Hadoop集群（只在master上启动）
+		/usr/hadoop/hadoop-2.7.6/sbin/start-all.sh
+		注：输入jps命令查看进程状态
 
 (9)HBase安装
-    (先在master上操作，之后会有复制到slave1、slave2的步骤)
-    前提：  同步时间——ntpdate master
-	hadoop启动——/usr/zookeeper/zookeeper-3.4.10/bin/zkServer.sh start
-	hadoop启动——/usr/hadoop/hadoop-2.7.3/sbin/start-all.sh
+    前提：  同步时间——	systemctl status ntpd
+			systemctl start ntpd
+			ntpdate master
+
+	zookeeper启动(三台)——/usr/zookeeper/zookeeper-3.4.10/bin/zkServer.sh start
+			        /usr/zookeeper/zookeeper-3.4.10/bin/zkServer.sh status
+				Mode: follower/leader
+
+	hadoop启动（只在master）——/usr/hadoop/hadoop-2.7.6/sbin/start-all.sh
 			jps命令查看hadoop启动情况（在三个虚拟机中）
+
+	1）将hbase的软件压缩包存放至/opt/soft
 	
+	2）先在master这个虚拟机上安装hbase，安装目录：/usr/hbase
+		mkdir /usr/hbase
+		tar -xzvf /opt/soft/hbase-1.2.6-bin.tar.gz -C /usr/hbase
+
+
+	3）在master上修改配置文件/usr/hbase/hbase-1.2.6/conf/hbase-env.sh
+		vi /usr/hbase/hbase-1.2.6/conf/hbase-env.sh
+		(增加内容)
+		export HBASE_MANAGES_ZK=false
+		export JAVA_HOME=/usr/java/jdk1.8.0_171
+		export HBASE_CLASSPATH=/usr/hadoop/hadoop-2.7.6/etc/hadoop
